@@ -3,18 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
-	"github.com/yuki-katayama/gorm-gin-todo/models"
-
-	// "github.com/yuki-katayama/gorm-gin-todo/testdata"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
+
+type Todo struct {
+	*gorm.Model
+	Content string `json:"content"`
+}
+
 
 type DBConfig struct {
 	User string
@@ -46,7 +46,7 @@ func connectionDB() (*gorm.DB, error) {
 
 
 func main() {
-	engine := gin.Default()
+	r := gin.Default()
 	db, err := connectionDB()
 
 	if err != nil {
@@ -54,66 +54,17 @@ func main() {
 	}
 
 	// Migrate the schema
-	err = db.AutoMigrate(&models.Todo{})
+	err = db.AutoMigrate(&Todo{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	engine.Static("/static", "./static");
-	engine.LoadHTMLGlob("client/*")
-	engine.GET("/index", func(c *gin.Context) {
-		var todos []models.Todo
-
-		// Get all records
-		result := db.Find(&todos)
-		if result.Error != nil {
-			log.Printf("Error fetching todos: %v", result.Error)
-			c.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Hello world",
-			"todos": todos,
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
 		})
-	})
-
-	//todo edit
-	engine.GET("/todos/edit", func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Query("id"))
-		if err != nil {
-			log.Fatalln(err)
-		}
-		var todo models.Todo
-		db.Where("id = ?", id).Take(&todo)
-		c.HTML(http.StatusOK, "edit.html", gin.H{
-			"content": "Todo",
-			"todo":  todo,
-		})
-	})
-
-	engine.GET("/todos/destroy", func(c *gin.Context) {
-		id, _ := c.GetQuery("id")
-		db.Delete(&models.Todo{}, id)
-		c.Redirect(http.StatusMovedPermanently, "/index")
-	})
-
-	engine.POST("/todos/update", func(c *gin.Context) {
-		id, _ := strconv.Atoi(c.PostForm("id"))
-		content := c.PostForm("content")
-		var todo models.Todo
-		db.Where("id = ?", id).Take(&todo)
-		todo.Content = content
-		db.Save(&todo)
-		c.Redirect(http.StatusMovedPermanently, "/index")
-	})
-
-	engine.POST("/todos/create", func(c *gin.Context) {
-		content := c.PostForm("content")
-		db.Create(&models.Todo{Content: content})
-		c.Redirect(http.StatusMovedPermanently, "/index")
 	})
 
 	fmt.Println("Database connection and setup successful")
-	engine.Run(":8080")
+	r.Run(":8080")
 }
