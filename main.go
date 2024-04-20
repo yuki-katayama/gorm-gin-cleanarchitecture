@@ -58,6 +58,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 		id, _ := c.GetQuery("id")
 		result := db.Delete(&Todo{}, id)
 		if errorDB(result, c) { return }
+		c.Redirect(http.StatusMovedPermanently, "/index")
 	})
 
 	r.POST("/todo/update", func(c *gin.Context) {
@@ -69,6 +70,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 		todo.Content = content
 		result = db.Save(&todo)
 		if errorDB(result, c) { return }
+		c.Redirect(http.StatusMovedPermanently, "/index")
 	})
 
 	r.POST("/todo/create", func(c *gin.Context) {
@@ -76,6 +78,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 		fmt.Println(c.Request.PostForm, content)
 		result := db.Create(&Todo{Content: content})
 		if errorDB(result, c) { return }
+		c.Redirect(http.StatusMovedPermanently, "/index")
 	})
 
 	r.GET("/todo/list", func(c *gin.Context) {
