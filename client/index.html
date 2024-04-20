@@ -16,6 +16,6 @@
 
     <hr />
 	{{ range .todos }}
-		<p><a href="/todos/edit?id={{.ID}}">{{ .ID }}:{{ .Content }}</a></p> <a href="/todos/destroy?id={{ .ID }}">[削除]</a>
+		<p><a href="/todos/edit?id={{.ID}}">{{ .ID }}:{{ .Content }}</a></p> <a href="/todos/delete?id={{ .ID }}">[削除]</a>
 	{{end}}
 </html>
