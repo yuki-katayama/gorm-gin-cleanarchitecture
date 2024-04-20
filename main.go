@@ -96,12 +96,21 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 		fmt.Println(json.NewEncoder(os.Stdout).Encode(todo))
 		c.JSON(http.StatusOK, todo)
 	})
+
+	r.GET("/index", func(c *gin.Context) {
+		var todos []Todo
+		result := db.Find(&todos)
+		if errorDB(result, c) { return }
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"title": "やることリスト",
+			"todos": todos,
+		})
+	})
 }
 
 func main() {
 	r := gin.Default()
 	db, err := connectionDB()
-
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -111,7 +120,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
-
+	r.LoadHTMLGlob("client/*")
 	listeners(r, db)
 
 	fmt.Println("Database connection and setup successful")
