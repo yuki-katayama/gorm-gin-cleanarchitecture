@@ -106,6 +106,20 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 			"todos": todos,
 		})
 	})
+
+	//todo edit
+	r.GET("/edit", func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Query("id"))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		var todo Todo
+		db.Where("id = ?", id).Take(&todo)
+		c.HTML(http.StatusOK, "edit.html", gin.H{
+			"title": "Todoの編集",
+			"todo":  todo,
+		})
+	})
 }
 
 func main() {
