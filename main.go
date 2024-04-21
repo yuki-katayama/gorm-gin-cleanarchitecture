@@ -10,15 +10,9 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"encoding/json"
+	"github.com/yuki-katayama/gorm-gin-todo/src/domain/models"
+	"github.com/yuki-katayama/gorm-gin-todo/src/infra/config"
 )
-
-type DBConfig struct {
-	User string
-	Password string
-	Host string
-	Port int
-	Table string
-}
 
 func getDBConfig() DBConfig {
     port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
@@ -50,7 +44,7 @@ func errorDB(db *gorm.DB, c *gin.Context) bool {
 func listeners(r *gin.Engine, db *gorm.DB) {
 	r.GET("/todo/delete", func(c *gin.Context) {
 		id, _ := c.GetQuery("id")
-		result := db.Delete(&Todo{}, id)
+		result := db.Delete(&models.Todo{}, id)
 		if errorDB(result, c) { return }
 		c.Redirect(http.StatusMovedPermanently, "/index")
 	})
@@ -58,7 +52,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 	r.POST("/todo/update", func(c *gin.Context) {
 		id, _ := strconv.Atoi(c.PostForm("id"))
 		content := c.PostForm("content")
-		var todo Todo
+		var todo models.Todo
 		result := db.Where("id = ?", id).Take(&todo)
 		if errorDB(result, c) { return }
 		todo.Content = content
@@ -70,13 +64,13 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 	r.POST("/todo/create", func(c *gin.Context) {
 		content := c.PostForm("content")
 		fmt.Println(c.Request.PostForm, content)
-		result := db.Create(&Todo{Content: content})
+		result := db.Create(&models.Todo{Content: content})
 		if errorDB(result, c) { return }
 		c.Redirect(http.StatusMovedPermanently, "/index")
 	})
 
 	r.GET("/todo/list", func(c *gin.Context) {
-		var todos []Todo
+		var todos []models.Todo
 		// Get all records
 		result := db.Find(&todos)
 		if errorDB(result, c) { return }
@@ -85,7 +79,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 	})
 
 	r.GET("/todo/get", func(c *gin.Context) {
-		var todo Todo
+		var todo models.Todo
 		id, _ := c.GetQuery("id")
 		result := db.First(&todo, id)
 		if errorDB(result, c) { return }
@@ -95,7 +89,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 	})
 
 	r.GET("/index", func(c *gin.Context) {
-		var todos []Todo
+		var todos []models.Todo
 		result := db.Find(&todos)
 		if errorDB(result, c) { return }
 		c.HTML(http.StatusOK, "index.html", gin.H{
@@ -110,7 +104,7 @@ func listeners(r *gin.Engine, db *gorm.DB) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		var todo Todo
+		var todo models.Todo
 		db.Where("id = ?", id).Take(&todo)
 		c.HTML(http.StatusOK, "edit.html", gin.H{
 			"title": "Todoの編集",
@@ -127,11 +121,11 @@ func main() {
 	}
 
 	// Migrate the schema
-	err = db.AutoMigrate(&Todo{})
+	err = db.AutoMigrate(&models.Todo{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
-	r.LoadHTMLGlob("client/*")
+	r.LoadHTMLGlob("src/client/*")
 	listeners(r, db)
 
 	fmt.Println("Database connection and setup successful")
