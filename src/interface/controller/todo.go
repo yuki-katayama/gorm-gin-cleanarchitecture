@@ -63,15 +63,11 @@ func (tc *TodoController) UpdateTodo(c *gin.Context) {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Content is not found"})
 	}
 	todo.Content = content
-	if err := c.ShouldBindJSON(&todo); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
 	if err := tc.service.UpdateTodo(c.Request.Context(), todo); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
-	c.JSON(http.StatusOK, gin.H{"success": "todo updated"})
+	c.Status(http.StatusOK)
 	c.Redirect(http.StatusSeeOther, "/index")
 }
 

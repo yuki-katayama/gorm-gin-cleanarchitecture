@@ -8,6 +8,7 @@ import (
 	"github.com/yuki-katayama/gorm-gin-todo/src/application/usecases"
 	"github.com/yuki-katayama/gorm-gin-todo/src/interface/controller"
 	"github.com/yuki-katayama/gorm-gin-todo/src/infra/http/routes"
+	"github.com/yuki-katayama/gorm-gin-todo/src/domain/errors"
 )
 
 func main() {
@@ -30,6 +31,9 @@ func main() {
 	// ルータの設定
 	engine = router.SetupRouterTodo(engine, todoController)
 	engine = router.SetupRouterPage(engine, todoController)
+
+	// エラーの関し
+	engine.Use(errors.ErrorHandlingMiddleware())  // ミドルウェアを追加
 
 	// サーバを8080ポートで起動
 	if err := engine.Run(":8080"); err != nil {
