@@ -12,12 +12,6 @@ import (
 	"encoding/json"
 )
 
-type Todo struct {
-	*gorm.Model
-	Content string `json:"content"`
-}
-
-
 type DBConfig struct {
 	User string
 	Password string
