@@ -20,7 +20,10 @@ type DBConfig struct {
 
 // OpenDB - データベース接続を開きます
 func getDBConfig() DBConfig {
-    port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
+    port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	if err != nil {
+        port = 3306 // MySQLのデフォルトポート
+    }
     return DBConfig{
         User: os.Getenv("DB_USER"),
         Password: os.Getenv("DB_PASSWORD"),
