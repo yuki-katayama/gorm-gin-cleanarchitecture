@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"github.com/gin-gonic/gin"
-	"github.com/yuki-katayama/gorm-gin-todo/src/infra/database/repository"
+	"github.com/yuki-katayama/gorm-gin-todo/src/infra/database/repositories"
 	"github.com/yuki-katayama/gorm-gin-todo/src/infra/database"
-	"github.com/yuki-katayama/gorm-gin-todo/src/application/usecases"
-	"github.com/yuki-katayama/gorm-gin-todo/src/interface/controller"
+	"github.com/yuki-katayama/gorm-gin-todo/src/usecase/services"
+	"github.com/yuki-katayama/gorm-gin-todo/src/interface/controllers"
 	"github.com/yuki-katayama/gorm-gin-todo/src/infra/http/routes"
 	"github.com/yuki-katayama/gorm-gin-todo/src/domain/errors"
 )
@@ -22,7 +22,7 @@ func main() {
 	todoRepo := repository.NewTodoRepository(db)
 
 	// サービス層の初期化
-	todoService := service.NewTodoService(todoRepo)
+	todoService := services.NewTodoService(todoRepo)
 
 	// コントローラの初期化
 	todoController := controllers.NewTodoController(todoService)

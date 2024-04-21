@@ -15,7 +15,7 @@ type DBConfig struct {
 	Password string
 	Host string
 	Port int
-	Table string
+	DB string
 }
 
 // OpenDB - データベース接続を開きます
@@ -29,13 +29,13 @@ func getDBConfig() DBConfig {
         Password: os.Getenv("DB_PASSWORD"),
         Host: os.Getenv("DB_HOST"),
         Port: port,
-		Table: os.Getenv("DB_TABLE"),
+		DB: os.Getenv("DB"),
     }
 }
 
 func ConnectionDB() (*gorm.DB, error) {
 	config := getDBConfig();
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True", config.User, config.Password, config.Host, config.Port, config.Table)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True", config.User, config.Password, config.Host, config.Port, config.DB)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err

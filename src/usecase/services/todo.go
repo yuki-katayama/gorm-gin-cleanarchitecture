@@ -1,18 +1,18 @@
-package service
+package services
 
 import (
 	"context"
 	"github.com/yuki-katayama/gorm-gin-todo/src/domain/models"
-	"github.com/yuki-katayama/gorm-gin-todo/src/domain/repository"
+	"github.com/yuki-katayama/gorm-gin-todo/src/domain/repositories"
 )
 
 // TodoService - Todoアプリケーションサービス
 type TodoService struct {
-	repo repository.TodoRepository
+	repo repositories.TodoRepository
 }
 
 // NewTodoService - 新しいTodoServiceを作成します
-func NewTodoService(repo repository.TodoRepository) *TodoService {
+func NewTodoService(repo repositories.TodoRepository) *TodoService {
 	return &TodoService{
 		repo: repo,
 	}

@@ -5,17 +5,17 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yuki-katayama/gorm-gin-todo/src/application/usecases"
+	"github.com/yuki-katayama/gorm-gin-todo/src/usecase/services"
 	"github.com/yuki-katayama/gorm-gin-todo/src/domain/models"
 )
 
 // TodoController - Todoに関するHTTPリクエストを処理するコントローラ
 type TodoController struct {
-	service *service.TodoService
+	service *services.TodoService
 }
 
 // NewTodoController - 新しいTodoControllerを作成します
-func NewTodoController(service *service.TodoService) *TodoController {
+func NewTodoController(service *services.TodoService) *TodoController {
 	return &TodoController{
 		service: service,
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"github.com/yuki-katayama/gorm-gin-todo/src/domain/models"
-	"github.com/yuki-katayama/gorm-gin-todo/src/domain/repository"
+	"github.com/yuki-katayama/gorm-gin-todo/src/domain/repositories"
 )
 
 // TodoRepository - GORMによるTodoリポジトリの実装
@@ -13,7 +13,7 @@ type TodoRepository struct {
 }
 
 // NewTodoRepository - 新しいGormTodoRepositoryを作成します
-func NewTodoRepository(db *gorm.DB) repository.TodoRepository {
+func NewTodoRepository(db *gorm.DB) repositories.TodoRepository {
 	return &TodoRepository{DB: db}
 }
 

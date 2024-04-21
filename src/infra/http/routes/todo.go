@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"github.com/yuki-katayama/gorm-gin-todo/src/interface/controller"
+	"github.com/yuki-katayama/gorm-gin-todo/src/interface/controllers"
 )
 
 // SetupRouter - ルータの設定を行います
