@@ -1,4 +1,4 @@
-package 
+package config
 
 type DBConfig struct {
 	User string
