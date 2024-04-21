@@ -29,7 +29,7 @@ func (r *TodoRepository) Create(ctx context.Context, todo *models.Todo) error {
 }
 
 func (r *TodoRepository) Update(ctx context.Context, todo *models.Todo) error {
-	return r.DB.Save(todo).Error
+	return r.DB.WithContext(ctx).Save(todo).Error
 }
 
 func (r *TodoRepository) Delete(ctx context.Context, id uint) error {

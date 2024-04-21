@@ -31,6 +31,9 @@ func (s *TodoService) GetTodoByID(ctx context.Context, id uint) (*models.Todo, e
 
 // UpdateTodo - Todoの更新
 func (s *TodoService) UpdateTodo(ctx context.Context, todo *models.Todo) error {
+	if err := todo.Validate(); err != nil {
+        return err
+    }
 	return s.repo.Update(ctx, todo)
 }
 

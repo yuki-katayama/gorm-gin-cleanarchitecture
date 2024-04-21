@@ -58,20 +58,20 @@ func (tc *TodoController) UpdateTodo(c *gin.Context) {
     }
 
 	content := c.PostForm("content")
-    if content == "" {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Content is required"})
-        return
-    }
 	todo, err := tc.service.GetTodoByID(c.Request.Context(), uint(id));
 	if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Content is not found"})
 	}
 	todo.Content = content
-	err = tc.service.UpdateTodo(c.Request.Context(), todo)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save todo"})
+	if err := c.ShouldBindJSON(&todo); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
+	if err := tc.service.UpdateTodo(c.Request.Context(), todo); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+	c.JSON(http.StatusOK, gin.H{"success": "todo updated"})
 	c.Redirect(http.StatusSeeOther, "/index")
 }
 
